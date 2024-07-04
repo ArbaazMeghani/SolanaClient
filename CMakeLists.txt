@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+find_package(CURL REQUIRED)
+
 set(SOURCES
     main.cpp
     src/base58.cpp
@@ -12,4 +14,4 @@ set(SOURCES
 
 add_executable(SolanaSwapClient ${SOURCES})
 target_include_directories(SolanaSwapClient PRIVATE ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(SolanaSwapClient)
+target_link_libraries(SolanaSwapClient PRIVATE CURL::libcurl)

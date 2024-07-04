@@ -34,7 +34,7 @@ uint64_t Solana::getBalance(const std::string &publicKey)
     if (!curl_)
     {
         std::cerr << "curl not initialized" << std::endl;
-        return -1;
+        throw std::runtime_error("Curl not initialized");
     }
 
     CURLcode res;
@@ -52,7 +52,7 @@ uint64_t Solana::getBalance(const std::string &publicKey)
     if (res != CURLE_OK)
     {
         std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
-        return -1;
+        throw std::runtime_error("Failed to get balance");
     }
 
     simdjson::dom::element element = parser_.parse(readBuffer);
@@ -72,6 +72,7 @@ void Solana::initCurl()
     if (!curl_)
     {
         std::cerr << "Failed to initialize curl" << std::endl;
+        throw std::runtime_error("Failed to initialize curl");
     }
 
     headers_ = curl_slist_append(headers_, "Content-Type: application/json");

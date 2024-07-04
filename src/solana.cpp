@@ -1,7 +1,13 @@
 #include "solana.h"
 #include <curl/curl.h>
 
-std::string Solana::rpcUrl_ = "https://api.devnet.solana.com";
+Solana::Solana() : rpcUrl_("https://api.mainnet-beta.solana.com/")
+{
+}
+
+Solana::Solana(const std::string &rpcUrl) : rpcUrl_(rpcUrl)
+{
+}
 
 void Solana::setRpcUrl(const std::string &rpcUrl)
 {
@@ -49,7 +55,7 @@ std::string Solana::getBalance(const std::string &publicKey)
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     // Set callback function to receive data
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Solana::writeCallback);
 
     // Set data pointer to pass to callback function
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -67,4 +73,8 @@ std::string Solana::getBalance(const std::string &publicKey)
     curl_slist_free_all(headers);
 
     return readBuffer;
+}
+
+Solana::~Solana()
+{
 }

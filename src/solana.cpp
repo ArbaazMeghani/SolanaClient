@@ -3,19 +3,19 @@
 
 Solana::Solana() : rpcUrl_("https://api.mainnet-beta.solana.com/"), curl_(NULL), headers_(NULL), parser_()
 {
-    init_curl();
+    initCurl();
 }
 
 Solana::Solana(const std::string &rpcUrl) : rpcUrl_(rpcUrl), curl_(NULL), headers_(NULL), parser_()
 {
-    init_curl();
+    initCurl();
 }
 
 void Solana::setRpcUrl(const std::string &rpcUrl)
 {
-    cleanup_curl();
+    cleanupCurl();
     rpcUrl_ = rpcUrl;
-    init_curl();
+    initCurl();
 }
 
 std::string Solana::getRpcUrl()
@@ -63,10 +63,10 @@ uint64_t Solana::getBalance(const std::string &publicKey)
 
 Solana::~Solana()
 {
-    cleanup_curl();
+    cleanupCurl();
 }
 
-void Solana::init_curl()
+void Solana::initCurl()
 {
     curl_ = curl_easy_init();
     if (!curl_)
@@ -81,7 +81,7 @@ void Solana::init_curl()
     curl_easy_setopt(curl_, CURLOPT_WRITEFUNCTION, Solana::writeCallback);
 }
 
-void Solana::cleanup_curl()
+void Solana::cleanupCurl()
 {
     curl_easy_cleanup(curl_);
     curl_slist_free_all(headers_);

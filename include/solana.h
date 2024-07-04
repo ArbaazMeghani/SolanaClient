@@ -36,6 +36,6 @@ private:
     std::string rpcUrl_;
     simdjson::dom::parser parser_;
     static size_t writeCallback(void *contents, size_t size, size_t nmemb, std::string *data);
-    void init_curl();
-    void cleanup_curl();
+    void initCurl();
+    void cleanupCurl();
 };

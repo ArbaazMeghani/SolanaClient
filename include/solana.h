@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <curl/curl.h>
+#include <simdjson.h>
 
 class Solana
 {
@@ -12,7 +13,7 @@ public:
     void setRpcUrl(const std::string &url);
     ~Solana();
     std::string getRpcUrl();
-    std::string getBalance(const std::string &publicKey);
+    uint64_t getBalance(const std::string &publicKey);
     // std::string transfer(const std::string &from, const std::string &to, const std::string &amount);
     // std::string createAccount();
     // std::string createToken(const std::string &mintAuthority, const std::string &freezeAuthority);
@@ -33,6 +34,7 @@ private:
     CURL *curl_;
     struct curl_slist *headers_;
     std::string rpcUrl_;
+    simdjson::dom::parser parser_;
     static size_t writeCallback(void *contents, size_t size, size_t nmemb, std::string *data);
     void init_curl();
     void cleanup_curl();

@@ -1,12 +1,12 @@
 #include "solana.h"
 #include <curl/curl.h>
 
-Solana::Solana() : rpcUrl_("https://api.mainnet-beta.solana.com/"), curl_(NULL), headers_(NULL)
+Solana::Solana() : rpcUrl_("https://api.mainnet-beta.solana.com/"), curl_(NULL), headers_(NULL), parser_()
 {
     init_curl();
 }
 
-Solana::Solana(const std::string &rpcUrl) : rpcUrl_(rpcUrl)
+Solana::Solana(const std::string &rpcUrl) : rpcUrl_(rpcUrl), curl_(NULL), headers_(NULL), parser_()
 {
     init_curl();
 }
@@ -29,12 +29,12 @@ size_t Solana::writeCallback(void *contents, size_t size, size_t nmemb, std::str
     return size * nmemb;
 }
 
-std::string Solana::getBalance(const std::string &publicKey)
+uint64_t Solana::getBalance(const std::string &publicKey)
 {
     if (!curl_)
     {
         std::cerr << "curl not initialized" << std::endl;
-        return "";
+        return -1;
     }
 
     CURLcode res;
@@ -52,10 +52,13 @@ std::string Solana::getBalance(const std::string &publicKey)
     if (res != CURLE_OK)
     {
         std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
-        return "";
+        return -1;
     }
 
-    return readBuffer;
+    simdjson::dom::element element = parser_.parse(readBuffer);
+    uint64_t balance = element["result"]["value"].get_uint64().value();
+
+    return balance;
 }
 
 Solana::~Solana()

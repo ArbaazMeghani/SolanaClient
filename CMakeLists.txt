@@ -10,6 +10,7 @@ find_package(CURL REQUIRED)
 set(SOURCES
     main.cpp
     src/base58.cpp
+    src/solana.cpp
 )
 
 add_executable(SolanaSwapClient ${SOURCES})

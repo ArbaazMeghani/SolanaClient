@@ -1,17 +1,21 @@
 #include "solana.h"
 #include <curl/curl.h>
 
-Solana::Solana() : rpcUrl_("https://api.mainnet-beta.solana.com/")
+Solana::Solana() : rpcUrl_("https://api.mainnet-beta.solana.com/"), curl_(NULL), headers_(NULL)
 {
+    init_curl();
 }
 
 Solana::Solana(const std::string &rpcUrl) : rpcUrl_(rpcUrl)
 {
+    init_curl();
 }
 
 void Solana::setRpcUrl(const std::string &rpcUrl)
 {
+    cleanup_curl();
     rpcUrl_ = rpcUrl;
+    init_curl();
 }
 
 std::string Solana::getRpcUrl()
@@ -27,11 +31,9 @@ size_t Solana::writeCallback(void *contents, size_t size, size_t nmemb, std::str
 
 std::string Solana::getBalance(const std::string &publicKey)
 {
-    CURL *curl;
-    curl = curl_easy_init();
-    if (!curl)
+    if (!curl_)
     {
-        std::cerr << "Failed to initialize curl" << std::endl;
+        std::cerr << "curl not initialized" << std::endl;
         return "";
     }
 
@@ -39,42 +41,47 @@ std::string Solana::getBalance(const std::string &publicKey)
     std::string readBuffer;
     std::string jsonBody = "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\":\"getBalance\", \"params\":[\"" + publicKey + "\"]}";
 
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-
-    // Set URL
-    curl_easy_setopt(curl, CURLOPT_URL, Solana::rpcUrl_.c_str());
-
-    // Set POST method
-    curl_easy_setopt(curl, CURLOPT_POST, 1L);
-
     // Set JSON-RPC request body
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonBody.c_str());
-
-    // Set headers
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-    // Set callback function to receive data
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Solana::writeCallback);
+    curl_easy_setopt(curl_, CURLOPT_POSTFIELDS, jsonBody.c_str());
 
     // Set data pointer to pass to callback function
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &readBuffer);
 
     // Perform the request
-    res = curl_easy_perform(curl);
+    res = curl_easy_perform(curl_);
     if (res != CURLE_OK)
     {
         std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
         return "";
     }
 
-    // Cleanup curl
-    curl_easy_cleanup(curl);
-    curl_slist_free_all(headers);
-
     return readBuffer;
 }
 
 Solana::~Solana()
 {
+    cleanup_curl();
+}
+
+void Solana::init_curl()
+{
+    curl_ = curl_easy_init();
+    if (!curl_)
+    {
+        std::cerr << "Failed to initialize curl" << std::endl;
+    }
+
+    headers_ = curl_slist_append(headers_, "Content-Type: application/json");
+    curl_easy_setopt(curl_, CURLOPT_URL, rpcUrl_.c_str());
+    curl_easy_setopt(curl_, CURLOPT_POST, 1L);
+    curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers_);
+    curl_easy_setopt(curl_, CURLOPT_WRITEFUNCTION, Solana::writeCallback);
+}
+
+void Solana::cleanup_curl()
+{
+    curl_easy_cleanup(curl_);
+    curl_slist_free_all(headers_);
+    curl_ = NULL;
+    headers_ = NULL;
 }

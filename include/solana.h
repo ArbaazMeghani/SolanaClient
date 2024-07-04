@@ -30,7 +30,10 @@ public:
     // std::string createAndTransferTokenWithAuthorityAndFreezeAuthorityAndMintAuthorityAndToken(const std::string &from, const std::string &to, const std::string &amount, const std::string &authority, const std::string &freezeAuthority, const std::string &mintAuthority, const std::string &token = "");
 
 private:
-    // CURL *curl;
+    CURL *curl_;
+    struct curl_slist *headers_;
     std::string rpcUrl_;
     static size_t writeCallback(void *contents, size_t size, size_t nmemb, std::string *data);
+    void init_curl();
+    void cleanup_curl();
 };

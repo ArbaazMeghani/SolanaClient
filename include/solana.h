@@ -22,7 +22,7 @@ public:
     // std::string getAccountInfo(const std::string &publicKey);
     // std::string getTokenAccountInfo(const std::string &publicKey);
     // std::string getMintInfo(const std::string &publicKey);
-    // std::string getRecentBlockhash();
+    std::string_view getRecentBlockhash();
     // std::string createAndTransfer(const std::string &from, const std::string &to, const std::string &amount);
     // std::string createAndTransferToken(const std::string &from, const std::string &to, const std::string &amount);
     // std::string createAndTransferTokenWithAuthority(const std::string &from, const std::string &to, const std::string &amount, const std::string &authority);

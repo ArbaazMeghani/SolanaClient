@@ -41,13 +41,9 @@ uint64_t Solana::getBalance(const std::string &publicKey)
     std::string readBuffer;
     std::string jsonBody = "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\":\"getBalance\", \"params\":[\"" + publicKey + "\"]}";
 
-    // Set JSON-RPC request body
     curl_easy_setopt(curl_, CURLOPT_POSTFIELDS, jsonBody.c_str());
-
-    // Set data pointer to pass to callback function
     curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &readBuffer);
 
-    // Perform the request
     res = curl_easy_perform(curl_);
     if (res != CURLE_OK)
     {
@@ -56,9 +52,33 @@ uint64_t Solana::getBalance(const std::string &publicKey)
     }
 
     simdjson::dom::element element = parser_.parse(readBuffer);
-    uint64_t balance = element["result"]["value"].get_uint64().value();
+    return element["result"]["value"].get_uint64().value();
+}
 
-    return balance;
+std::string_view Solana::getRecentBlockhash()
+{
+    if (!curl_)
+    {
+        std::cerr << "curl not initialized" << std::endl;
+        throw std::runtime_error("Curl not initialized");
+    }
+
+    CURLcode res;
+    std::string readBuffer;
+    std::string jsonBody = "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\":\"getRecentBlockhash\", \"params\":[]}";
+
+    curl_easy_setopt(curl_, CURLOPT_POSTFIELDS, jsonBody.c_str());
+    curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &readBuffer);
+
+    res = curl_easy_perform(curl_);
+    if (res != CURLE_OK)
+    {
+        std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+        throw std::runtime_error("Failed to get recent blockhash");
+    }
+
+    simdjson::dom::element element = parser_.parse(readBuffer);
+    return element["result"]["value"]["blockhash"].get_string().value();
 }
 
 Solana::~Solana()

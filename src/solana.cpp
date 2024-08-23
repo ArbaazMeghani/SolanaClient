@@ -55,7 +55,7 @@ uint64_t Solana::getBalance(const std::string &publicKey)
     return element["result"]["value"].get_uint64().value();
 }
 
-std::string_view Solana::getRecentBlockhash()
+std::string_view Solana::getLatestBlockhash()
 {
     if (!curl_)
     {
@@ -65,7 +65,7 @@ std::string_view Solana::getRecentBlockhash()
 
     CURLcode res;
     std::string readBuffer;
-    std::string jsonBody = "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\":\"getRecentBlockhash\", \"params\":[]}";
+    std::string jsonBody = "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\":\"getLatestBlockhash\", \"params\":[]}";
 
     curl_easy_setopt(curl_, CURLOPT_POSTFIELDS, jsonBody.c_str());
     curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &readBuffer);

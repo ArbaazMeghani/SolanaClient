@@ -4,6 +4,7 @@
 #include <string>
 #include <curl/curl.h>
 #include <simdjson.h>
+#include "account.h"
 
 class Solana
 {
@@ -19,7 +20,7 @@ public:
     // std::string createToken(const std::string &mintAuthority, const std::string &freezeAuthority);
     // std::string mintToken(const std::string &mintAuthority, const std::string &to, const std::string &amount);
     // std::string transferToken(const std::string &from, const std::string &to, const std::string &amount);
-    // std::string getAccountInfo(const std::string &publicKey);
+    Account getAccountInfo(const std::string &publicKey);
     // std::string getTokenAccountInfo(const std::string &publicKey);
     // std::string getMintInfo(const std::string &publicKey);
     std::string_view getLatestBlockhash();

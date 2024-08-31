@@ -81,6 +81,40 @@ std::string_view Solana::getLatestBlockhash()
     return element["result"]["value"]["blockhash"].get_string().value();
 }
 
+Account Solana::getAccountInfo(const std::string &publicKey)
+{
+    if (!curl_)
+    {
+        std::cerr << "curl not initialized" << std::endl;
+        throw std::runtime_error("Curl not initialized");
+    }
+
+    CURLcode res;
+    std::string readBuffer;
+    std::string jsonBody = "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\":\"getAccountInfo\", \"params\":[\"" + publicKey + "\"]}";
+
+    curl_easy_setopt(curl_, CURLOPT_POSTFIELDS, jsonBody.c_str());
+    curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &readBuffer);
+
+    res = curl_easy_perform(curl_);
+    if (res != CURLE_OK)
+    {
+        std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+        throw std::runtime_error("Failed to get account info");
+    }
+
+    simdjson::dom::element element = parser_.parse(readBuffer);
+    Account account;
+    account.data = element["result"]["value"]["data"].get_string().value();
+    account.owner = element["result"]["value"]["owner"].get_string().value();
+    account.lamports = element["result"]["value"]["lamports"].get_uint64().value();
+    account.rentEpoch = element["result"]["value"]["rentEpoch"].get_uint64().value();
+    account.executable = element["result"]["value"]["executable"].get_bool().value();
+    account.space = (uint32_t)element["result"]["value"]["space"].get_uint64().value();
+
+    return account;
+}
+
 Solana::~Solana()
 {
     cleanupCurl();

@@ -20,5 +20,12 @@ int main()
 
     std::cout << "Current slot: " << solana.getSlot() << std::endl;
     std::cout << "Slot leader: " << solana.getSlotLeader() << std::endl;
+
+    std::cout << "Slot leaders: " << std::endl;
+    std::vector<std::string_view> slotLeaders = solana.getSlotLeaders(solana.getSlot(), 10);
+    for (const auto &slotLeader : slotLeaders)
+    {
+        std::cout << slotLeader << std::endl;
+    }
     return 0;
 }

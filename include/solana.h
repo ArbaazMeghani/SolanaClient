@@ -19,6 +19,7 @@ public:
     std::string_view getLatestBlockhash();
     uint64_t getSlot();
     std::string_view getSlotLeader();
+    std::vector<std::string_view> getSlotLeaders(uint64_t startSlot, uint64_t limit);
 
 private:
     CURL *curl_;

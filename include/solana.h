@@ -17,6 +17,7 @@ public:
     uint64_t getBalance(const std::string &publicKey);
     Account getAccountInfo(const std::string &publicKey);
     std::string_view getLatestBlockhash();
+    uint64_t getSlot();
 
 private:
     CURL *curl_;

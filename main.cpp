@@ -27,5 +27,7 @@ int main()
     {
         std::cout << slotLeader << std::endl;
     }
+
+    std::cout << "Block height: " << solana.getBlockHeight() << std::endl;
     return 0;
 }

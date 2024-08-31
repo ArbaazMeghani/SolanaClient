@@ -20,6 +20,7 @@ public:
     uint64_t getSlot();
     std::string_view getSlotLeader();
     std::vector<std::string_view> getSlotLeaders(uint64_t startSlot, uint64_t limit);
+    uint64_t getBlockHeight();
 
 private:
     CURL *curl_;

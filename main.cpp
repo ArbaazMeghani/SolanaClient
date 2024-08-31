@@ -19,5 +19,6 @@ int main()
     std::cout << "space: " << account.space << std::endl;
 
     std::cout << "Current slot: " << solana.getSlot() << std::endl;
+    std::cout << "Slot leader: " << solana.getSlotLeader() << std::endl;
     return 0;
 }

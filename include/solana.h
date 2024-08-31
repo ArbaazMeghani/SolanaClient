@@ -18,6 +18,7 @@ public:
     Account getAccountInfo(const std::string &publicKey);
     std::string_view getLatestBlockhash();
     uint64_t getSlot();
+    std::string_view getSlotLeader();
 
 private:
     CURL *curl_;

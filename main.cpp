@@ -30,5 +30,6 @@ int main()
 
     std::cout << "Block height: " << solana.getBlockHeight() << std::endl;
     std::cout << "Minimum ledger slot: " << solana.getMinimumLedgerSlot() << std::endl;
+    std::cout << "Genesis hash: " << solana.getGenesisHash() << std::endl;
     return 0;
 }

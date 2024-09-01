@@ -251,6 +251,32 @@ uint64_t Solana::getMinimumLedgerSlot()
     return element["result"].get_uint64().value();
 }
 
+std::string_view Solana::getGenesisHash()
+{
+    if (!curl_)
+    {
+        std::cerr << "curl not initialized" << std::endl;
+        throw std::runtime_error("Curl not initialized");
+    }
+
+    CURLcode res;
+    std::string readBuffer;
+    std::string jsonBody = "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\":\"getGenesisHash\", \"params\":[]}";
+
+    curl_easy_setopt(curl_, CURLOPT_POSTFIELDS, jsonBody.c_str());
+    curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &readBuffer);
+
+    res = curl_easy_perform(curl_);
+    if (res != CURLE_OK)
+    {
+        std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+        throw std::runtime_error("Failed to get genesis hash");
+    }
+
+    simdjson::dom::element element = parser_.parse(readBuffer);
+    return element["result"].get_string().value();
+}
+
 Solana::~Solana()
 {
     cleanupCurl();

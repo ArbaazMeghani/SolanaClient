@@ -21,6 +21,7 @@ public:
     std::string_view getSlotLeader();
     std::vector<std::string_view> getSlotLeaders(uint64_t startSlot, uint64_t limit);
     uint64_t getBlockHeight();
+    uint64_t getMinimumLedgerSlot();
 
 private:
     CURL *curl_;
